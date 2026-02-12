@@ -1,376 +1,629 @@
 // ─── ACTUAL SCHEMA (from your Permify response) ────────────────────────────
 
 const RAW_SCHEMA = {
-  "schema": {
-    "entity_definitions": {
-      "repository": {
-        "name": "repository",
-
-        "relations": {
-          "admin": {
-            "name": "admin",
-            "relation_references": [
-              { "type": "user", "relation": "" }
-            ]
-          },
-
-          "developer": {
-            "name": "developer",
-            "relation_references": [
-              { "type": "user", "relation": "" }
-            ]
-          },
-
-          "viewer": {
-            "name": "viewer",
-            "relation_references": [
-              { "type": "user", "relation": "" }
-            ]
-          },
-
-          "dev_team": {
-            "name": "dev_team",
-            "relation_references": [
-              { "type": "team", "relation": "" }
-            ]
-          },
-
-          "view_team": {
-            "name": "view_team",
-            "relation_references": [
-              { "type": "team", "relation": "" }
-            ]
-          },
-
-          "parent_org": {
-            "name": "parent_org",
-            "relation_references": [
-              { "type": "organization", "relation": "" }
-            ]
-          }
-        },
-
-        "permissions": {
-
-          "admin_access": {
-            "name": "admin_access",
-            "child": {
-              "rewrite": {
-                "rewrite_operation": "OPERATION_UNION",
-                "children": [
-                  {
-                    "leaf": {
-                      "computed_user_set": {
-                        "relation": "admin"
-                      }
-                    }
-                  },
-                  {
-                    "leaf": {
-                      "tuple_to_user_set": {
-                        "tupleSet": {
-                          "relation": "parent_org"
-                        },
-                        "computed": {
-                          "relation": "admin"
-                        }
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          },
-
-          "developer_access": {
-            "name": "developer_access",
-            "child": {
-              "rewrite": {
-                "rewrite_operation": "OPERATION_UNION",
-                "children": [
-
-                  {
-                    "leaf": {
-                      "computed_user_set": {
-                        "relation": "developer"
-                      }
-                    }
-                  },
-
-                  {
-                    "leaf": {
-                      "tuple_to_user_set": {
-                        "tupleSet": {
-                          "relation": "dev_team"
-                        },
-                        "computed": {
-                          "relation": "member"
-                        }
-                      }
-                    }
-                  },
-
-                  {
-                    "leaf": {
-                      "tuple_to_user_set": {
-                        "tupleSet": {
-                          "relation": "dev_team"
-                        },
-                        "computed": {
-                          "relation": "maintainer"
-                        }
-                      }
-                    }
-                  },
-
-                  {
-                    "leaf": {
-                      "computed_user_set": {
-                        "relation": "admin_access"
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          },
-
-          "viewer_access": {
-            "name": "viewer_access",
-            "child": {
-              "rewrite": {
-                "rewrite_operation": "OPERATION_UNION",
-                "children": [
-
-                  {
-                    "leaf": {
-                      "computed_user_set": {
-                        "relation": "viewer"
-                      }
-                    }
-                  },
-
-                  {
-                    "leaf": {
-                      "tuple_to_user_set": {
-                        "tupleSet": {
-                          "relation": "view_team"
-                        },
-                        "computed": {
-                          "relation": "member"
-                        }
-                      }
-                    }
-                  },
-
-                  {
-                    "leaf": {
-                      "tuple_to_user_set": {
-                        "tupleSet": {
-                          "relation": "view_team"
-                        },
-                        "computed": {
-                          "relation": "maintainer"
-                        }
-                      }
-                    }
-                  },
-
-                  {
-                    "leaf": {
-                      "computed_user_set": {
-                        "relation": "developer_access"
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          },
-
-          "push_code": {
-            "name": "push_code",
-            "child": {
-              "leaf": {
-                "computed_user_set": {
-                  "relation": "developer_access"
-                }
-              }
-            }
-          },
-
-          "pull_code": {
-            "name": "pull_code",
-            "child": {
-              "leaf": {
-                "computed_user_set": {
-                  "relation": "viewer_access"
-                }
-              }
-            }
-          },
-
-          "manage_repository": {
-            "name": "manage_repository",
-            "child": {
-              "leaf": {
-                "computed_user_set": {
-                  "relation": "admin_access"
-                }
-              }
-            }
-          },
-
-          "delete_repository": {
-            "name": "delete_repository",
-            "child": {
-              "leaf": {
-                "computed_user_set": {
-                  "relation": "admin_access"
-                }
-              }
-            }
-          }
-        },
-
-        "attributes": {},
-
-        "references": {
-          "admin": "REFERENCE_RELATION",
-          "developer": "REFERENCE_RELATION",
-          "viewer": "REFERENCE_RELATION",
-          "dev_team": "REFERENCE_RELATION",
-          "view_team": "REFERENCE_RELATION",
-          "parent_org": "REFERENCE_RELATION",
-
-          "admin_access": "REFERENCE_PERMISSION",
-          "developer_access": "REFERENCE_PERMISSION",
-          "viewer_access": "REFERENCE_PERMISSION",
-          "push_code": "REFERENCE_PERMISSION",
-          "pull_code": "REFERENCE_PERMISSION",
-          "manage_repository": "REFERENCE_PERMISSION",
-          "delete_repository": "REFERENCE_PERMISSION"
-        }
-      },
-
-      "team": {
-        "name": "team",
-
-        "relations": {
-          "member": {
-            "name": "member",
-            "relation_references": [
-              { "type": "user", "relation": "" }
-            ]
-          },
-
-          "maintainer": {
-            "name": "maintainer",
-            "relation_references": [
-              { "type": "user", "relation": "" }
-            ]
-          }
-        },
-
-        "permissions": {
-          "manage_team": {
-            "name": "manage_team",
-            "child": {
-              "leaf": {
-                "computed_user_set": {
-                  "relation": "maintainer"
-                }
-              }
-            }
-          },
-
-          "view_team": {
-            "name": "view_team",
-            "child": {
-              "rewrite": {
-                "rewrite_operation": "OPERATION_UNION",
-                "children": [
-                  {
-                    "leaf": {
-                      "computed_user_set": {
-                        "relation": "member"
-                      }
-                    }
-                  },
-                  {
-                    "leaf": {
-                      "computed_user_set": {
-                        "relation": "maintainer"
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        },
-
-        "attributes": {},
-
-        "references": {
-          "member": "REFERENCE_RELATION",
-          "maintainer": "REFERENCE_RELATION",
-          "manage_team": "REFERENCE_PERMISSION",
-          "view_team": "REFERENCE_PERMISSION"
-        }
-      },
-
-      "organization": {
-        "name": "organization",
-
-        "relations": {
-          "admin": {
-            "name": "admin",
-            "relation_references": [
-              { "type": "user", "relation": "" }
-            ]
-          }
-        },
-
-        "permissions": {
-          "manage_repositories": {
-            "name": "manage_repositories",
-            "child": {
-              "leaf": {
-                "computed_user_set": {
-                  "relation": "admin"
-                }
-              }
-            }
-          }
-        },
-
-        "attributes": {},
-
-        "references": {
-          "admin": "REFERENCE_RELATION",
-          "manage_repositories": "REFERENCE_PERMISSION"
-        }
-      },
-
-      "user": {
-        "name": "user",
-        "relations": {},
-        "permissions": {},
-        "attributes": {},
-        "references": {}
-      }
-    },
-
-    "rule_definitions": {},
-
-    "references": {
-      "repository": "REFERENCE_ENTITY",
-      "team": "REFERENCE_ENTITY",
-      "organization": "REFERENCE_ENTITY",
-      "user": "REFERENCE_ENTITY"
-    }
-  }
+	"schema": {
+		"entity_definitions": {
+			"company": {
+				"name": "company",
+				"relations": {
+					"checker": {
+						"name": "checker",
+						"relation_references": [
+							{
+								"type": "corporate_customer",
+								"relation": ""
+							}
+						]
+					},
+					"maker": {
+						"name": "maker",
+						"relation_references": [
+							{
+								"type": "corporate_customer",
+								"relation": ""
+							}
+						]
+					}
+				},
+				"permissions": {
+					"approve_trade": {
+						"name": "approve_trade",
+						"child": {
+							"rewrite": {
+								"rewrite_operation": "OPERATION_UNION",
+								"children": [
+									{
+										"leaf": {
+											"computed_user_set": {
+												"relation": "approve_trade_for_maker"
+											}
+										}
+									},
+									{
+										"leaf": {
+											"computed_user_set": {
+												"relation": "approve_trade_for_checker"
+											}
+										}
+									}
+								]
+							}
+						}
+					},
+					"approve_trade_for_checker": {
+						"name": "approve_trade_for_checker",
+						"child": {
+							"rewrite": {
+								"rewrite_operation": "OPERATION_INTERSECTION",
+								"children": [
+									{
+										"rewrite": {
+											"rewrite_operation": "OPERATION_INTERSECTION",
+											"children": [
+												{
+													"leaf": {
+														"computed_user_set": {
+															"relation": "checker"
+														}
+													}
+												},
+												{
+													"leaf": {
+														"tuple_to_user_set": {
+															"tupleSet": {
+																"relation": "checker"
+															},
+															"computed": {
+																"relation": "is_active"
+															}
+														}
+													}
+												}
+											]
+										}
+									},
+									{
+										"rewrite": {
+											"rewrite_operation": "OPERATION_UNION",
+											"children": [
+												{
+													"leaf": {
+														"call": {
+															"rule_name": "is_amount_within_limits",
+															"arguments": [
+																{
+																	"computed_attribute": {
+																		"name": "maker_transaction_limit"
+																	}
+																}
+															]
+														}
+													}
+												},
+												{
+													"leaf": {
+														"call": {
+															"rule_name": "is_signatories_signed",
+															"arguments": [
+																{
+																	"computed_attribute": {
+																		"name": "required_signatories_count"
+																	}
+																}
+															]
+														}
+													}
+												}
+											]
+										}
+									}
+								]
+							}
+						}
+					},
+					"approve_trade_for_maker": {
+						"name": "approve_trade_for_maker",
+						"child": {
+							"rewrite": {
+								"rewrite_operation": "OPERATION_INTERSECTION",
+								"children": [
+									{
+										"rewrite": {
+											"rewrite_operation": "OPERATION_INTERSECTION",
+											"children": [
+												{
+													"leaf": {
+														"computed_user_set": {
+															"relation": "maker"
+														}
+													}
+												},
+												{
+													"leaf": {
+														"tuple_to_user_set": {
+															"tupleSet": {
+																"relation": "maker"
+															},
+															"computed": {
+																"relation": "is_active"
+															}
+														}
+													}
+												}
+											]
+										}
+									},
+									{
+										"leaf": {
+											"call": {
+												"rule_name": "is_amount_within_limits",
+												"arguments": [
+													{
+														"computed_attribute": {
+															"name": "maker_transaction_limit"
+														}
+													}
+												]
+											}
+										}
+									}
+								]
+							}
+						}
+					}
+				},
+				"attributes": {
+					"maker_transaction_limit": {
+						"name": "maker_transaction_limit",
+						"type": "ATTRIBUTE_TYPE_INTEGER"
+					},
+					"required_signatories_count": {
+						"name": "required_signatories_count",
+						"type": "ATTRIBUTE_TYPE_INTEGER"
+					}
+				},
+				"references": {
+					"approve_trade": "REFERENCE_PERMISSION",
+					"approve_trade_for_checker": "REFERENCE_PERMISSION",
+					"approve_trade_for_maker": "REFERENCE_PERMISSION",
+					"checker": "REFERENCE_RELATION",
+					"maker": "REFERENCE_RELATION",
+					"maker_transaction_limit": "REFERENCE_ATTRIBUTE",
+					"required_signatories_count": "REFERENCE_ATTRIBUTE"
+				}
+			},
+			"corporate_customer": {
+				"name": "corporate_customer",
+				"relations": {
+					"member": {
+						"name": "member",
+						"relation_references": [
+							{
+								"type": "user",
+								"relation": ""
+							}
+						]
+					}
+				},
+				"permissions": {
+					"is_active": {
+						"name": "is_active",
+						"child": {
+							"leaf": {
+								"call": {
+									"rule_name": "is_corporate_customer_active",
+									"arguments": [
+										{
+											"computed_attribute": {
+												"name": "status"
+											}
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"attributes": {
+					"status": {
+						"name": "status",
+						"type": "ATTRIBUTE_TYPE_STRING"
+					}
+				},
+				"references": {
+					"is_active": "REFERENCE_PERMISSION",
+					"member": "REFERENCE_RELATION",
+					"status": "REFERENCE_ATTRIBUTE"
+				}
+			},
+			"organization": {
+				"name": "organization",
+				"relations": {
+					"admin": {
+						"name": "admin",
+						"relation_references": [
+							{
+								"type": "user",
+								"relation": ""
+							}
+						]
+					},
+					"checker": {
+						"name": "checker",
+						"relation_references": [
+							{
+								"type": "user",
+								"relation": ""
+							}
+						]
+					},
+					"maker": {
+						"name": "maker",
+						"relation_references": [
+							{
+								"type": "user",
+								"relation": ""
+							}
+						]
+					}
+				},
+				"permissions": {
+					"approve_corporate_customer": {
+						"name": "approve_corporate_customer",
+						"child": {
+							"rewrite": {
+								"rewrite_operation": "OPERATION_UNION",
+								"children": [
+									{
+										"leaf": {
+											"computed_user_set": {
+												"relation": "admin"
+											}
+										}
+									},
+									{
+										"leaf": {
+											"computed_user_set": {
+												"relation": "checker"
+											}
+										}
+									}
+								]
+							}
+						}
+					},
+					"create_corporate_customer": {
+						"name": "create_corporate_customer",
+						"child": {
+							"rewrite": {
+								"rewrite_operation": "OPERATION_UNION",
+								"children": [
+									{
+										"leaf": {
+											"computed_user_set": {
+												"relation": "admin"
+											}
+										}
+									},
+									{
+										"leaf": {
+											"computed_user_set": {
+												"relation": "maker"
+											}
+										}
+									}
+								]
+							}
+						}
+					},
+					"manage_corporate_customer": {
+						"name": "manage_corporate_customer",
+						"child": {
+							"leaf": {
+								"computed_user_set": {
+									"relation": "admin"
+								}
+							}
+						}
+					}
+				},
+				"attributes": {},
+				"references": {
+					"admin": "REFERENCE_RELATION",
+					"approve_corporate_customer": "REFERENCE_PERMISSION",
+					"checker": "REFERENCE_RELATION",
+					"create_corporate_customer": "REFERENCE_PERMISSION",
+					"maker": "REFERENCE_RELATION",
+					"manage_corporate_customer": "REFERENCE_PERMISSION"
+				}
+			},
+			"user": {
+				"name": "user",
+				"relations": {},
+				"permissions": {},
+				"attributes": {},
+				"references": {}
+			}
+		},
+		"rule_definitions": {
+			"is_amount_within_limits": {
+				"name": "is_amount_within_limits",
+				"arguments": {
+					"maker_transaction_limit": "ATTRIBUTE_TYPE_INTEGER"
+				},
+				"expression": {
+					"reference_map": {
+						"1": {
+							"name": "context",
+							"overload_id": [],
+							"value": null
+						},
+						"4": {
+							"name": "",
+							"overload_id": [
+								"less_equals_int64"
+							],
+							"value": null
+						},
+						"5": {
+							"name": "maker_transaction_limit",
+							"overload_id": [],
+							"value": null
+						}
+					},
+					"type_map": {
+						"1": {
+							"dyn": {}
+						},
+						"2": {
+							"dyn": {}
+						},
+						"3": {
+							"dyn": {}
+						},
+						"4": {
+							"primitive": "BOOL"
+						},
+						"5": {
+							"primitive": "INT64"
+						}
+					},
+					"source_info": {
+						"syntax_version": "",
+						"location": "<input>",
+						"line_offsets": [
+							1,
+							2,
+							61
+						],
+						"positions": {
+							"1": 2,
+							"2": 9,
+							"3": 14,
+							"4": 34,
+							"5": 37
+						},
+						"macro_calls": {},
+						"extensions": []
+					},
+					"expr_version": "",
+					"expr": {
+						"id": "4",
+						"call_expr": {
+							"target": null,
+							"function": "_<=_",
+							"args": [
+								{
+									"id": "3",
+									"select_expr": {
+										"operand": {
+											"id": "2",
+											"select_expr": {
+												"operand": {
+													"id": "1",
+													"ident_expr": {
+														"name": "context"
+													}
+												},
+												"field": "data",
+												"test_only": false
+											}
+										},
+										"field": "transaction_amount",
+										"test_only": false
+									}
+								},
+								{
+									"id": "5",
+									"ident_expr": {
+										"name": "maker_transaction_limit"
+									}
+								}
+							]
+						}
+					}
+				}
+			},
+			"is_corporate_customer_active": {
+				"name": "is_corporate_customer_active",
+				"arguments": {
+					"status": "ATTRIBUTE_TYPE_STRING"
+				},
+				"expression": {
+					"reference_map": {
+						"1": {
+							"name": "status",
+							"overload_id": [],
+							"value": null
+						},
+						"2": {
+							"name": "",
+							"overload_id": [
+								"equals"
+							],
+							"value": null
+						}
+					},
+					"type_map": {
+						"1": {
+							"primitive": "STRING"
+						},
+						"2": {
+							"primitive": "BOOL"
+						},
+						"3": {
+							"primitive": "STRING"
+						}
+					},
+					"source_info": {
+						"syntax_version": "",
+						"location": "<input>",
+						"line_offsets": [
+							1,
+							2,
+							21
+						],
+						"positions": {
+							"1": 2,
+							"2": 9,
+							"3": 12
+						},
+						"macro_calls": {},
+						"extensions": []
+					},
+					"expr_version": "",
+					"expr": {
+						"id": "2",
+						"call_expr": {
+							"target": null,
+							"function": "_==_",
+							"args": [
+								{
+									"id": "1",
+									"ident_expr": {
+										"name": "status"
+									}
+								},
+								{
+									"id": "3",
+									"const_expr": {
+										"string_value": "active"
+									}
+								}
+							]
+						}
+					}
+				}
+			},
+			"is_signatories_signed": {
+				"name": "is_signatories_signed",
+				"arguments": {
+					"required_signatories_count": "ATTRIBUTE_TYPE_INTEGER"
+				},
+				"expression": {
+					"reference_map": {
+						"1": {
+							"name": "context",
+							"overload_id": [],
+							"value": null
+						},
+						"4": {
+							"name": "",
+							"overload_id": [
+								"greater_equals_int64"
+							],
+							"value": null
+						},
+						"5": {
+							"name": "required_signatories_count",
+							"overload_id": [],
+							"value": null
+						}
+					},
+					"type_map": {
+						"1": {
+							"dyn": {}
+						},
+						"2": {
+							"dyn": {}
+						},
+						"3": {
+							"dyn": {}
+						},
+						"4": {
+							"primitive": "BOOL"
+						},
+						"5": {
+							"primitive": "INT64"
+						}
+					},
+					"source_info": {
+						"syntax_version": "",
+						"location": "<input>",
+						"line_offsets": [
+							1,
+							2,
+							72
+						],
+						"positions": {
+							"1": 2,
+							"2": 9,
+							"3": 14,
+							"4": 42,
+							"5": 45
+						},
+						"macro_calls": {},
+						"extensions": []
+					},
+					"expr_version": "",
+					"expr": {
+						"id": "4",
+						"call_expr": {
+							"target": null,
+							"function": "_>=_",
+							"args": [
+								{
+									"id": "3",
+									"select_expr": {
+										"operand": {
+											"id": "2",
+											"select_expr": {
+												"operand": {
+													"id": "1",
+													"ident_expr": {
+														"name": "context"
+													}
+												},
+												"field": "data",
+												"test_only": false
+											}
+										},
+										"field": "signatories_approved_count",
+										"test_only": false
+									}
+								},
+								{
+									"id": "5",
+									"ident_expr": {
+										"name": "required_signatories_count"
+									}
+								}
+							]
+						}
+					}
+				}
+			}
+		},
+		"references": {
+			"company": "REFERENCE_ENTITY",
+			"corporate_customer": "REFERENCE_ENTITY",
+			"is_amount_within_limits": "REFERENCE_RULE",
+			"is_corporate_customer_active": "REFERENCE_RULE",
+			"is_signatories_signed": "REFERENCE_RULE",
+			"organization": "REFERENCE_ENTITY",
+			"user": "REFERENCE_ENTITY"
+		}
+	}
 };
 
 // ─── PARSER ────────────────────────────────────────────────────────────────
@@ -582,16 +835,6 @@ function showPreview() {
   const relationStr = relation.name;
   const subjectStr  = `${subjectType}:${subjectId}`;
   const tupleStr    = `${entityStr}#${relationStr}@${subjectStr}`;
-
-  // Visual parts
-  document.getElementById('tv-entity').textContent   = entityStr;
-  document.getElementById('tv-relation').textContent = relationStr;
-  document.getElementById('tv-subject').textContent  = subjectStr;
-
-  // Tuple string (colored)
-  document.getElementById('tupleString').innerHTML = `
-    <span class="ts-entity">${entityType}:${entityId}</span><span class="ts-sep1">#</span><span class="ts-relation">${relationStr}</span><span class="ts-sep2">@</span><span class="ts-subject">${subjectType}:${subjectId}</span>
-  `;
 
   // Plain English
   document.getElementById('plainEnglish').innerHTML =

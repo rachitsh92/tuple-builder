@@ -14,15 +14,14 @@
   <!-- Header -->
   <header>
     <div class="logo">
-      <div class="logo-icon">🔐</div>
-      <div class="logo-text">Auth<span>Z</span> Policy Builder</div>
+      <div class="logo-text">AuthZ Policy Builder</div>
     </div>
     <div class="tenant-badge">tenant: authflow_prod</div>
   </header>
 
   <!-- Page title -->
   <div class="page-title">
-    <h1>Create Authorization <span>Policy</span></h1>
+    <h1>Create Authorization Policy</h1>
     <p>Select a resource, pick the access type, and assign a subject. The tuple is generated automatically.</p>
   </div>
 
@@ -112,31 +111,7 @@
 
   <!-- STEP 4: PREVIEW -->
   <div class="preview-card" id="step4">
-    <div class="preview-title">Tuple Preview</div>
-
-    <!-- Visual tuple parts -->
-    <div class="tuple-visual" id="tupleVisual">
-      <div class="tuple-part entity">
-        <div class="tuple-part-label">Entity</div>
-        <div class="tuple-part-value" id="tv-entity">—</div>
-      </div>
-      <div class="tuple-sep">#</div>
-      <div class="tuple-part relation">
-        <div class="tuple-part-label">Relation</div>
-        <div class="tuple-part-value" id="tv-relation">—</div>
-      </div>
-      <div class="tuple-sep">@</div>
-      <div class="tuple-part subject">
-        <div class="tuple-part-label">Subject</div>
-        <div class="tuple-part-value" id="tv-subject">—</div>
-      </div>
-    </div>
-
-    <!-- Tuple string -->
-    <div class="tuple-string-box" id="tupleStringBox">
-      <div id="tupleString">—</div>
-      <button class="copy-btn" onclick="copyTuple()">Copy</button>
-    </div>
+    <div class="preview-title">Authorization Data Preview</div>
 
     <!-- Plain english -->
     <div class="plain-english" id="plainEnglish">—</div>
