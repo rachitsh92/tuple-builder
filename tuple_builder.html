@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Policy Builder — AuthZ</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrapper">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🔐</div>
+      <div class="logo-text">Auth<span>Z</span> Policy Builder</div>
+    </div>
+    <div class="tenant-badge">tenant: authflow_prod</div>
+  </header>
+
+  <!-- Page title -->
+  <div class="page-title">
+    <h1>Create Authorization <span>Policy</span></h1>
+    <p>Select a resource, pick the access type, and assign a subject. The tuple is generated automatically.</p>
+  </div>
+
+  <!-- Steps bar -->
+  <div class="steps-bar">
+    <div class="step-item">
+      <div class="step-circle active" id="sc1">01</div>
+      <div>
+        <div class="step-label active" id="sl1">Resource</div>
+      </div>
+    </div>
+    <div class="step-connector" id="conn1"></div>
+    <div class="step-item">
+      <div class="step-circle" id="sc2">02</div>
+      <div>
+        <div class="step-label" id="sl2">Relation</div>
+      </div>
+    </div>
+    <div class="step-connector" id="conn2"></div>
+    <div class="step-item">
+      <div class="step-circle" id="sc3">03</div>
+      <div>
+        <div class="step-label" id="sl3">Subject</div>
+      </div>
+    </div>
+    <div class="step-connector" id="conn3"></div>
+    <div class="step-item">
+      <div class="step-circle" id="sc4">04</div>
+      <div>
+        <div class="step-label" id="sl4">Preview</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1: RESOURCE -->
+  <div class="card active-card" id="step1">
+    <div class="card-header">
+      <div class="step-num s1">01</div>
+      <div>
+        <h2>Select Resource</h2>
+        <p>What do you want to protect?</p>
+      </div>
+    </div>
+    <div class="field-group">
+      <div class="field">
+        <label>Resource Type</label>
+        <select id="entitySelect" onchange="onEntityChange()">
+          <option value="">Choose entity...</option>
+        </select>
+        <div class="field-hint">Entities from your schema</div>
+      </div>
+      <div class="field">
+        <label>Resource ID</label>
+        <input type="text" id="entityId" placeholder="e.g. company_001" oninput="onEntityIdChange()" />
+        <div class="field-hint">The specific instance ID</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: RELATION -->
+  <div class="card locked" id="step2">
+    <div class="card-header">
+      <div class="step-num s2">02</div>
+      <div>
+        <h2>Select Relation</h2>
+        <p>What type of access are you granting?</p>
+      </div>
+    </div>
+    <div id="relationContent">
+      <div class="lock-msg">🔒 Select a resource first</div>
+    </div>
+  </div>
+
+  <!-- STEP 3: SUBJECT -->
+  <div class="card locked" id="step3">
+    <div class="card-header">
+      <div class="step-num s3">03</div>
+      <div>
+        <h2>Enter Subject</h2>
+        <p>Who is getting this access?</p>
+      </div>
+    </div>
+    <div id="subjectContent">
+      <div class="lock-msg">🔒 Select a relation first</div>
+    </div>
+  </div>
+
+  <!-- STEP 4: PREVIEW -->
+  <div class="preview-card" id="step4">
+    <div class="preview-title">Tuple Preview</div>
+
+    <!-- Visual tuple parts -->
+    <div class="tuple-visual" id="tupleVisual">
+      <div class="tuple-part entity">
+        <div class="tuple-part-label">Entity</div>
+        <div class="tuple-part-value" id="tv-entity">—</div>
+      </div>
+      <div class="tuple-sep">#</div>
+      <div class="tuple-part relation">
+        <div class="tuple-part-label">Relation</div>
+        <div class="tuple-part-value" id="tv-relation">—</div>
+      </div>
+      <div class="tuple-sep">@</div>
+      <div class="tuple-part subject">
+        <div class="tuple-part-label">Subject</div>
+        <div class="tuple-part-value" id="tv-subject">—</div>
+      </div>
+    </div>
+
+    <!-- Tuple string -->
+    <div class="tuple-string-box" id="tupleStringBox">
+      <div id="tupleString">—</div>
+      <button class="copy-btn" onclick="copyTuple()">Copy</button>
+    </div>
+
+    <!-- Plain english -->
+    <div class="plain-english" id="plainEnglish">—</div>
+
+    <div class="divider"></div>
+
+    <!-- JSON structure -->
+    <div class="preview-title" style="margin-bottom:14px;">Tuple Object (JSON)</div>
+    <div class="tuple-string-box" style="font-size:12px; display:block; white-space:pre;" id="tupleJson">—</div>
+
+    <div class="actions" style="margin-top:20px;">
+      <button class="btn btn-primary" id="createBtn" onclick="createPolicy()">
+        ✓ Create Policy
+      </button>
+      <button class="btn btn-ghost" onclick="resetForm()">Cancel</button>
+      <button class="btn btn-reset" onclick="resetForm()">↺ Reset</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✓ &nbsp;Tuple created successfully</div>
+
+<script src="tuple_builder.js"></script>
+</body>
+</html>
