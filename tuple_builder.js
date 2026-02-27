@@ -744,18 +744,9 @@ function renderRelations(entity) {
     card.id = `rel-${rel.name}`;
     card.onclick = () => onRelationSelect(rel, entity);
 
-    // Permissions this relation appears in
-    const permList = entity.permissions
-      .filter(p => p.toLowerCase().includes(rel.name))
-      .slice(0, 3);
-
     card.innerHTML = `
       <div class="rel-card-name">${rel.name}</div>
       <div class="rel-card-type">→ ${rel.type}</div>
-      <div class="rel-card-perms">
-        ${permList.map(p => `<div class="perm-item">${p}</div>`).join('')}
-        ${permList.length === 0 ? `<div class="perm-item" style="color:#6b7280; font-style:italic;">linked resource</div>` : ''}
-      </div>
     `;
 
     grid.appendChild(card);
